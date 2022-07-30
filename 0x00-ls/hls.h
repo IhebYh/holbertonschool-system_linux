@@ -11,4 +11,4 @@
 /******** FUNCTIONS **********/
 void _ls(const char *dir);
 /*****************************/
-#endif _HLS_
+#endif
