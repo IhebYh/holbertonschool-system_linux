@@ -14,7 +14,6 @@ void _ls(const char *dir)
 	while ((d = readdir(dh)) != NULL)
 	{
 		printf("%s  ", d->d_name);
-		printf("\n");
 	}
 	printf("\n");
 }
