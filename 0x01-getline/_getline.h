@@ -10,10 +10,6 @@
 /******* Macros ********/
 #define READ_SIZE 1024
 
-/******** Functions ********/
-char *_getline(const int fd);
-char *line_parser(fd_t *scanner);
-
 /******** Structs *********/
 /**
  * struct fd_s - linked list for file descriptor.
@@ -30,4 +26,7 @@ typedef struct fd_s
 	struct fd_s *next;
 } fd_t;
 
+/******** Functions ********/
+char *_getline(const int fd);
+char *line_parser(fd_t *scanner);
 #endif /* _GETLINE_H_ */
