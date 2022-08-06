@@ -39,21 +39,21 @@ char *_getline(const int fd)
 }
 /**
  * line_parser - parse, split and handle lines
- * @scanner : pointer to scanned data
+ * @scan : pointer to scanned data
  * Return: pointer to the parsed line
  */
-char *line_parser(fd_t *scanner)
+char *line_parser(fd_t *scan)
 {
 	int i, j;
 	int size = 0;
 	int data = 0;
 	char *line = NULL, *tmp;
 
-	while (scanner->data > 0)
+	while (scan->data > 0)
 	{
-		if (size < data + scanner->data + 1)
+		if (size < data + scan->data + 1)
 		{
-			size += scanner->data + 1;
+			size += scan->data + 1;
 			tmp = malloc(sizeof(char) * size);
 			if (tmp == NULL)
 			{
@@ -65,21 +65,22 @@ char *line_parser(fd_t *scanner)
 			free(line);
 			line = tmp;
 		}
-		for (i = 0; i < scanner->data; ++i)
-			if (scanner->buffer[i] == '\n')
+		for (i = 0; i < scan->data; i++)
+			if (scan->buffer[i] == '\n')
 			{
-				scanner->buffer[++i] = '\0';
-				 scanner->data -= i;
-				memcpy(line + data, scanner->buffer, i);
-				for (j = 0; i < READ_SIZE; ++j, ++i)
-					scanner->buffer[j] = scanner->buffer[i];
-				for (; j < READ_SIZE; ++j)
-					scanner->buffer[j] = '\0';
+				scan->buffer[i++] = '\0';
+				scan->data -= i;
+				memcpy(line + data, scan->buffer, i);
+				for (j = 0; i < READ_SIZE; j++, i++)
+					scan->buffer[j] = scan->buffer[i];
+				for (; j < READ_SIZE; j++)
+					scan->buffer[j] = '\0';
 				return (line);
 			}
-		memcpy(line + data, scanner->buffer, scanner->data);
-		data += scanner->data;
-		scanner->data = read(scanner->fd, scanner->buffer, READ_SIZE);
+		memcpy(line + data, scan->buffer, scan->data);
+		data += scan->data;
+		scan->data = read(scan->fd, scan->buffer, READ_SIZE);
 	}
+
 	return (line);
 }
