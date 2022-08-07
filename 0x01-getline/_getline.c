@@ -28,7 +28,7 @@ char *_getline(const int fd)
 	if (data <= 0)
 	{
 		free(buffer);
-		getline = NULL;
+		free(getline->buffer);
 		return (NULL);
 	}
 	scanner = malloc(sizeof(fd_t));
