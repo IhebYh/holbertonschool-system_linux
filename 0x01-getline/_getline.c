@@ -12,10 +12,13 @@ char *_getline(const int fd)
 	fd_t *scanner;
 	char *buffer;
 	int data;
-
+	if (fd == -1)
+	{
+		return (NULL);
+	}
 	for (scanner = getline; scanner; scanner = scanner->next)
 		if (scanner->fd == fd)
-		{
+		{		
 			if (scanner->data <= 0)
 				scanner->data = read(fd, scanner->buffer, READ_SIZE);
 			return (line_parser(scanner));
@@ -25,6 +28,7 @@ char *_getline(const int fd)
 	if (data <= 0)
 	{
 		free(buffer);
+		getline = NULL;
 		return (NULL);
 	}
 	scanner = malloc(sizeof(fd_t));
@@ -81,6 +85,5 @@ char *line_parser(fd_t *scan)
 		data += scan->data;
 		scan->data = read(scan->fd, scan->buffer, READ_SIZE);
 	}
-
 	return (line);
 }
