@@ -28,5 +28,6 @@ typedef struct fd_s
 
 /******** Functions ********/
 char *_getline(const int fd);
+void _free(fd_t *scan, fd_t *getline);
 char *line_parser(fd_t *scanner);
 #endif /* _GETLINE_H_ */
