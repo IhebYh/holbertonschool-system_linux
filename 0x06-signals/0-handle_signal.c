@@ -6,7 +6,8 @@
  */
 void signal_handler(int sig)
 {
-	write(STDOUT_FILENO, "Gotcha! [%d]\n", sig);
+	printf("Gotcha! [%d]\n", sig);
+	fflush(stdout);
 }
 
 /**
