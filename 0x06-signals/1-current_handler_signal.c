@@ -5,8 +5,9 @@
  * Return: the current SIGINT handler
  */
 
-void (*current_handler_signal(void))(int){
-	sighandler_t sig_handler;
+void (*current_handler_signal(void))(int)
+{
+	__sighandler_t sig_handler;
 
 	sig_handler = signal(SIGINT, SIG_DFL);
 	if (sig_handler == SIG_ERR)
