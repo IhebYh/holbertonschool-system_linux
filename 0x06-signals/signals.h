@@ -7,6 +7,6 @@
 #include <stdlib.h>
 
 int handle_signal(void);
-
+void signal_handler(int sig);
 
 #endif /* _SIGNALS_H_ */
