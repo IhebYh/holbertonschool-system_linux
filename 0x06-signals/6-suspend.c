@@ -1,7 +1,7 @@
 #include "signals.h"
 
 /**
- * signal_handler - kills self
+ * sig_handler - kills self
  * @signum: the signal number
  * @siginfo: info struct about signal
  * @ucontext: pointer to ucontext_t
@@ -15,7 +15,7 @@ void sig_handler(int signum, siginfo_t *siginfo, void *ucontext)
 }
 
 /**
- * handle_sigaction - signal handler helper using sigaction
+ * sig_setter - signal handler helper using sigaction
  * Return: 0 on success else -1 on error
  */
 int sig_setter(void)
@@ -27,10 +27,14 @@ int sig_setter(void)
 	sa.sa_sigaction = sig_handler;
 	return (sigaction(SIGINT, &sa, NULL));
 }
-
-int main(){
+/**
+ * main - entry point
+ * Return: int
+ */
+int main(void)
+{
 	sig_setter();
-    pause();
+	pause();
 	printf("Signal received\n");
 	return (EXIT_SUCCESS);
 }
