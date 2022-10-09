@@ -11,7 +11,7 @@ void signal_handler(int sig)
 }
 
 /**
- * trace_signal_handler - a handler of SIGQUIT
+ * trace_signal_sender - a handler of SIGQUIT
  * Return: 0 or -1
  */
 int trace_signal_sender(void)
