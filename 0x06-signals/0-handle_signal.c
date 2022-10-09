@@ -6,7 +6,7 @@
  */
 void signal_handler(int sig)
 {
-	write(STDOUT_FILENO,"Gotcha! [%d]\n", sig);
+	write(STDOUT_FILENO, "Gotcha! [%d]\n", sig);
 }
 
 /**
