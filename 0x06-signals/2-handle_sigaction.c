@@ -12,7 +12,7 @@ void signal_handler(int sig)
 }
 
 /**
- * handle_signaction - signal handler helper using sigaction
+ * handle_sigaction - signal handler helper using sigaction
  * Return: 0 on success else -1 on error
  */
 int handle_sigaction(void)

@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 
 int handle_signal(void);
 void signal_handler(int sig);
