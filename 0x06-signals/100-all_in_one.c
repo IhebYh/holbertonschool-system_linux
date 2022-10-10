@@ -7,12 +7,10 @@
  * @context: a void pointer to a user context (getcontext(3))
  * Return: Always void
  */
-void sigaction_handler(int signum, siginfo_t *info, void *context)
+void sigaction_handler(__attribute__((unused))int signum,
+siginfo_t *info, __attribute__((unused))void *ucontext)
 {
 	char *msg = "Caught";
-
-	UNUSED(signum);
-	UNUSED(context);
 	psiginfo(info, msg);
 	fflush(stdout);
 }
