@@ -28,7 +28,7 @@ void all_in_one(void)
 
 	action.sa_sigaction = sigaction_handler;
 	sigemptyset(&action.sa_mask);
-	action.sa_flags = SA_SIGINFO;
-	for (i = 1; i < NSIG; i++)
+	action.sa_flags |= SA_SIGINFO;
+	for (i = 1; i < _NSIG; i++)
 		sigaction(i, &action, NULL);
 }
