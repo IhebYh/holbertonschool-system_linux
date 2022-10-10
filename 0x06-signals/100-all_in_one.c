@@ -4,13 +4,14 @@
  * sigaction_handler - act as handler for sigaction syscall
  * @signum: an integer representing a signal
  * @info: a pointer to a siginfo_t with info about the signal
- * @context: a void pointer to a user context (getcontext(3))
+ * @ucontext: a void pointer to a user context (getcontext(3))
  * Return: Always void
  */
 void sigaction_handler(__attribute__((unused))int signum,
 siginfo_t *info, __attribute__((unused))void *ucontext)
 {
 	char *msg = "Caught";
+
 	psiginfo(info, msg);
 	fflush(stdout);
 }
