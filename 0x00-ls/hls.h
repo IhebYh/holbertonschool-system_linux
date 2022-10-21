@@ -12,6 +12,6 @@
 /*****************************/
 
 /******** FUNCTIONS **********/
-int _ls(const char *dir);
+int _ls(const char *dir, const char *prog_name, int multi);
 /*****************************/
 #endif
