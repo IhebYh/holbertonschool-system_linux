@@ -9,18 +9,16 @@
 int main(int argc, char **argv)
 {
 	int i = 1, exit_status;
-	option_t opt = {0, 0, 0};
+	option_t opt = {0, 0};
 
 	if (argc < 2)
 	{
 		return (EXIT_FAILURE);
 	}
 	options_handler(argc, argv, &opt);
-	if (argc > 3)
-		opt.multi = 1;
 	while (i < argc)
 	{
-		if (opt.pos != i)
+		if (argv[i][0] != '-')
 		{
 			exit_status = _ls(argv[i], argv[0], opt);
 			printf("\n");
@@ -88,13 +86,20 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
  */
 int options_handler(int argc, char **argv, option_t *opt)
 {
-	int i = 1;
-
+	int i = 1, j = 1, files = 0;
+	
+	while (j < argc)
+	{
+		if (argv[j][0] != '-')
+			files++;
+		j++;
+	}
+	if ( files > 1)
+		opt->multi = 1;
 	while (i < argc)
 	{
 		if (argv[i][0] == '-')
 		{
-			opt->pos = i;
 			options_builder(argv[i], opt);
 			return (EXIT_SUCCESS);
 		}

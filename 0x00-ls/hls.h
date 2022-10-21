@@ -7,12 +7,12 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <string.h>
 #include <pwd.h>
 #include <grp.h>
 /*****************************/
 typedef struct option_s 
 {
-    int pos;
     int vertically;
     int multi;
 } option_t;
