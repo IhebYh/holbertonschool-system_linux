@@ -3,6 +3,7 @@
 
 /********* Libraries *********/
 #include <stdio.h>
+#include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
 #include <stdlib.h>
