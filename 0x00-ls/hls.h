@@ -6,9 +6,12 @@
 #include <dirent.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <pwd.h>
+#include <grp.h>
 /*****************************/
 
 /******** FUNCTIONS **********/
-void _ls(const char *dir);
+int _ls(const char *dir);
 /*****************************/
 #endif
