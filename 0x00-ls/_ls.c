@@ -17,6 +17,7 @@ int main(int argc, char **argv)
 	while (i < argc)
 	{
 		exit_status = _ls(argv[i], argv[0], argc > 2);
+		printf("\n");
 		i++;
 	}
 	return (exit_status);
