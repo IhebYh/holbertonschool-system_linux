@@ -27,7 +27,8 @@ int _ls(const char *dir)
 	dh = opendir(dir);
 	while ((d = readdir(dh)) != NULL)
 	{
-		printf("%s ", d->d_name);
+		if (d->d_name[0] != '.')
+			printf("%s ", d->d_name);
 	}
 	printf("\n");
 	closedir(dh);
