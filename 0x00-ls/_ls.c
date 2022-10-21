@@ -2,7 +2,8 @@
 
 /**
  * main - entry point
- *
+ * @argc: argument counter
+ * @argv: argument values
  * Return: int
  */
 int main(int argc, char **argv)
@@ -15,7 +16,7 @@ int main(int argc, char **argv)
 	}
 	while (i < argc)
 	{
-		exit_status =_ls(argv[i], argv[0], argc > 2);
+		exit_status = _ls(argv[i], argv[0], argc > 2);
 		i++;
 	}
 	return (exit_status);
@@ -25,6 +26,8 @@ int main(int argc, char **argv)
  * _ls - main function containing the functions
  * needed to get the GNU/Linux command ls
  * @dir : directory name
+ * @prog_name: program name
+ * @multi: 1 or 0 to check if it's a multi files display or not
  * Return: void
  */
 int _ls(const char *dir, const char *prog_name, int multi)
@@ -32,7 +35,7 @@ int _ls(const char *dir, const char *prog_name, int multi)
 	struct dirent *d;
 	DIR *dh;
 	char buff[1024];
-	
+
 	if (!dir)
 		return (EXIT_FAILURE);
 	dh = opendir(dir);
