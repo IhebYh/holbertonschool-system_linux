@@ -92,7 +92,7 @@ int options_handler(int argc, char **argv, option_t *opt)
 
 	while (i < argc)
 	{
-		if (*argv[i] == '-')
+		if (argv[i][0] == '-')
 		{
 			opt->pos = i;
 			options_builder(argv[i], opt);
