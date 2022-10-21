@@ -26,5 +26,6 @@ int _ls(const char *dir)
 		printf("%s ", d->d_name);
 	}
 	printf("\n");
+	closedir(dh);
 	return (0);
 }
