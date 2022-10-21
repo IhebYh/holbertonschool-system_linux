@@ -63,9 +63,15 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 	{
 		if (d->d_name[0] != '.')
 		{
-			printf("%s ", d->d_name);
 			if (opt.vertically)
+			{
+			printf("%s", d->d_name);
 			printf("\n");
+			}
+			else
+			{
+				printf("%s ", d->d_name);
+			}
 		}
 	}
 	closedir(dh);
