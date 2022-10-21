@@ -1,7 +1,11 @@
 #include "hls.h"
 
-
-int main()
+/**
+ * main - entry point
+ *
+ * Return: int
+ */
+int main(void)
 {
 	return (_ls("."));
 }
@@ -19,7 +23,7 @@ int _ls(const char *dir)
 
 	if (!dir)
 		return (1);
-	
+
 	dh = opendir(dir);
 	while ((d = readdir(dh)) != NULL)
 	{
