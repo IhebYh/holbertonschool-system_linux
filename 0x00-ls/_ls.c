@@ -9,15 +9,22 @@
 int main(int argc, char **argv)
 {
 	int i = 1, exit_status;
+	option_t opt = {0, 0, 0};
 
 	if (argc < 2)
 	{
 		return (EXIT_FAILURE);
 	}
+	options_handler(argc, argv, &opt);
+	if (argc > 3)
+		opt.multi = 1;
 	while (i < argc)
 	{
-		exit_status = _ls(argv[i], argv[0], argc > 2);
-		printf("\n");
+		if (opt.pos != i)
+		{
+			exit_status = _ls(argv[i], argv[0], opt);
+			printf("\n");
+		}
 		i++;
 	}
 	return (exit_status);
@@ -28,10 +35,10 @@ int main(int argc, char **argv)
  * needed to get the GNU/Linux command ls
  * @dir : directory name
  * @prog_name: program name
- * @multi: 1 or 0 to check if it's a multi files display or not
+ * @opt: options
  * Return: void
  */
-int _ls(const char *dir, const char *prog_name, int multi)
+int _ls(const char *dir, const char *prog_name, option_t opt)
 {
 	struct dirent *d;
 	DIR *dh;
@@ -50,14 +57,66 @@ int _ls(const char *dir, const char *prog_name, int multi)
 		perror(buff);
 		return (EXIT_FAILURE);
 	}
-	if (multi)
+	if (opt.multi)
 		printf("%s:\n", dir);
 	while ((d = readdir(dh)) != NULL)
 	{
 		if (d->d_name[0] != '.')
+		{
 			printf("%s ", d->d_name);
+			if (opt.vertically)
+			printf("\n");
+		}
 	}
-	printf("\n");
 	closedir(dh);
+	return (EXIT_SUCCESS);
+}
+
+/**
+ * options_handler - handling options for ls command
+ *
+ * @argc: argument counter
+ * @argv: arguments list
+ * @opt: options structure
+ * Return: int
+ */
+int options_handler(int argc, char **argv, option_t *opt)
+{
+	int i = 1;
+
+	while (i < argc)
+	{
+		if (*argv[i] == '-')
+		{
+			opt->pos = i;
+			options_builder(argv[i], opt);
+			return (EXIT_SUCCESS);
+		}
+		i++;
+	}
+	return (EXIT_FAILURE);
+}
+
+/**
+ * options_builder - building options for ls command
+ *
+ * @opts: list of options
+ * @opt_struct: options structure
+ * Return: int
+ */
+int options_builder(char *opts, option_t *opt_struct)
+{
+	while (*opts != '\0')
+	{
+		opts++;
+		switch (*opts)
+		{
+		case '1':
+			opt_struct->vertically = 1;
+			break;
+		default:
+			break;
+		}
+	}
 	return (EXIT_SUCCESS);
 }
