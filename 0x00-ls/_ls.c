@@ -47,7 +47,12 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 		return (EXIT_FAILURE);
 	dh = opendir(dir);
 	lstat(dir, &path);
-	if (!dh && !S_ISDIR(path.st_mode))
+	if (S_ISREG(path.st_mode))
+	{
+		printf("%s", dir);
+		return (EXIT_SUCCESS);
+	}
+	if (!dh)
 	{
 		buff[0] = 0;
 		if (errno == ENOENT)
@@ -56,11 +61,6 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 			sprintf(buff, "%s: cannot open directory %s", prog_name, dir);
 		perror(buff);
 		return (EXIT_FAILURE);
-	}
-	else if (S_ISREG(path.st_mode))
-	{
-		printf("%s", dir);
-		return (EXIT_SUCCESS);
 	}
 	if (opt.multi)
 		printf("%s:\n", dir);
