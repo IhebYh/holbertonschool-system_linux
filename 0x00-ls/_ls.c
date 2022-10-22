@@ -114,8 +114,6 @@ int file_handler(int argc, char **argv, option_t opt)
 			}
 			j++;
 		}
-			//printf("\n");
-
 	}
 	return (EXIT_SUCCESS);
 }
