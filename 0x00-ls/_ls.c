@@ -22,9 +22,8 @@ int main(int argc, char **argv)
 		if (argv[i][0] != '-')
 		{
 			exit_status = _ls(argv[i], argv[0], opt);
-			printf("\n");
 		}
-		if (!opt.vertically)
+		if (opt.vertically == 0)
 			printf("\n");
 		i++;
 	}
@@ -61,15 +60,14 @@ int _ls(const char *dir, const char *prog_name,option_t opt)
 		return (EXIT_FAILURE);
 	}
 	if (opt.multi)
-		printf("%s:\n", dir);
+		printf("\n%s:\n", dir);
 	while ((d = readdir(dh)) != NULL)
 	{
 		if (d->d_name[0] != '.')
 		{
 			if (opt.vertically)
 			{
-				printf("%s", d->d_name);
-				printf("\n");
+				printf("%s\n", d->d_name);
 			}
 			else
 			{
@@ -89,7 +87,7 @@ int file_handler(int argc, char **argv, option_t opt)
 	int j = 1;
 	struct stat path;
 
-	while (!opt.files_printed)
+	while (!opt.files_printed && opt.multi)
 	{
 		while (j < argc)
 		{
@@ -104,7 +102,6 @@ int file_handler(int argc, char **argv, option_t opt)
 			j++;
 		}
 	}
-	printf("\n");
 	return (EXIT_SUCCESS);
 }
 /**
