@@ -57,7 +57,7 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 		perror(buff);
 		return (EXIT_FAILURE);
 	}
-	else if (access(dir, F_OK) != -1 && S_ISREG(path.st_mode))
+	else if (S_ISREG(path.st_mode))
 	{
 		printf("%s", dir);
 		return (EXIT_SUCCESS);
