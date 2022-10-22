@@ -47,7 +47,7 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 		return (EXIT_FAILURE);
 	dh = opendir(dir);
 	lstat(dir, &path);
-	if (!dh && S_ISDIR(path.st_mode))
+	if (!dh && !S_ISDIR(path.st_mode))
 	{
 		buff[0] = 0;
 		if (errno == ENOENT)
