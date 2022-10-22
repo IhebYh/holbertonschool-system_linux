@@ -76,9 +76,9 @@ int _ls(const char *dir, const char *prog_name, option_t *opt, int *called)
 	{
 		if (d->d_name[0] != '.')
 		{
-			printf("%s ", d->d_name);
+			printf("%s", d->d_name);
 			if (opt->vertically && (d = readdir(dh)) != NULL)
-				printf("\n");
+				printf(" \n");
 			else 
 				d = readdir(dh);
 		}
