@@ -20,6 +20,7 @@ typedef struct option_s
 	int vertically;
 	int hidden;
 	int multi;
+	int all;
 } option_t;
 #define LAST_REG ""
 

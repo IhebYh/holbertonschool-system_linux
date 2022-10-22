@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 {
 	int i = 1, exit_status, called = 1;
 	struct stat path;
-	option_t opt = {0, 0, 0, 0, 0, 0};
+	option_t opt = {0, 0, 0, 0, 0, 0, 0};
 
 	if (argc < 2)
 	{
@@ -74,7 +74,7 @@ int _ls(const char *dir, const char *prog_name, option_t *opt, int *called)
 	d = readdir(dh);
 	while (d != NULL)
 	{
-		if (d->d_name[0] != '.' || opt->hidden)
+		if (d->d_name[0] != '.' || opt->hidden || (opt->all && (d->d_name[1] != '\0' && strlen(d->d_name) != 2)))
 		{
 			printf("%s", d->d_name);
 			if (!opt->vertically)
@@ -206,7 +206,7 @@ int options_builder(char *opts, option_t *opt_struct)
 			opt_struct->hidden = 1;
 			break;
 		case 'A':
-			opt_struct->hidden = 0;
+			opt_struct->all = 1;
 		default:
 			break;
 		}
