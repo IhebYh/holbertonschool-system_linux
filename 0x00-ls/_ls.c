@@ -206,8 +206,7 @@ int options_builder(char *opts, option_t *opt_struct)
 			opt_struct->hidden = 1;
 			break;
 		case 'A':
-			opt_struct->hidden = 1;
-			opt_struct->vertically = 1;
+			opt_struct->hidden = 0;
 		default:
 			break;
 		}
