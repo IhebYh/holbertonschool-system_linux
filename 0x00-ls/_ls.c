@@ -10,7 +10,7 @@ int main(int argc, char **argv)
 {
 	int i = 1, exit_status, called = 1;
 	struct stat path;
-	option_t opt = {0, 0, 0, 0, 0};
+	option_t opt = {0, 0, 0, 0, 0, 0};
 
 	if (argc < 2)
 	{
