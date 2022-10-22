@@ -8,7 +8,8 @@
  */
 int main(int argc, char **argv)
 {
-	int i = 1, exit_status;
+	int i = 1, exit_status, called = 1;
+	struct stat path;
 	option_t opt = {0, 0, 0, 0, 0};
 
 	if (argc < 2)
@@ -19,10 +20,10 @@ int main(int argc, char **argv)
 	file_handler(argc, argv, opt);
 	while (i < argc)
 	{
-		if (argv[i][0] != '-')
+		if (argv[i][0] != '-' && !IS_REG(argv[i], path))
 		{
-			exit_status = _ls(argv[i], argv[0], opt);
-			if (exit_status && i + 1 < opt.dir_nb + opt.files_nb)
+			exit_status = _ls(argv[i], argv[0], &opt, &called);
+			if (exit_status == 0)
 				printf("\n");
 		}
 		i++;
@@ -38,13 +39,14 @@ int main(int argc, char **argv)
  * @opt: options
  * Return: void
  */
-int _ls(const char *dir, const char *prog_name, option_t opt)
+int _ls(const char *dir, const char *prog_name, option_t *opt, int *called)
 {
 	struct dirent *d;
 	DIR *dh;
 	struct stat path;
 	char buff[1024];
-
+	if (IS_REG(dir, path))
+		(*called)++;
 	if (!dir || IS_REG(dir, path))
 		return (EXIT_FAILURE);
 	dh = opendir(dir);
@@ -58,19 +60,28 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 		perror(buff);
 		return (EXIT_FAILURE);
 	}
-	if (opt.files_nb > 1)
-		printf("\n");
-	if (opt.multi)
+	if ((opt->files_nb < *called  || (*called == 1)) && opt->multi)
+	{
 		printf("%s:\n", dir);
-	while ((d = readdir(dh)) != NULL)
+	}
+	else if (opt->multi)
+	{
+		printf("\n%s:\n", dir);
+	}
+	d = readdir(dh);
+	while (d != NULL)
 	{
 		if (d->d_name[0] != '.')
 		{
-			opt.vertically ? printf("%s\n", d->d_name) : printf("%s ", d->d_name);
+			printf("%s ", d->d_name);
+			if (opt->vertically && (d = readdir(dh)) != NULL)
+				printf("\n");
+			else 
+				d = readdir(dh);
 		}
+		else
+			d = readdir(dh);
 	}
-	if (opt.files_nb == 0)
-		printf("\n");
 	closedir(dh);
 	return (EXIT_SUCCESS);
 }
@@ -86,7 +97,7 @@ int file_handler(int argc, char **argv, option_t opt)
 	int j = 1;
 	struct stat path;
 
-	while (opt.files_printed == 0)
+	while (opt.files_printed == 0 && j < argc)
 	{
 		while (j < argc)
 		{
@@ -96,13 +107,14 @@ int file_handler(int argc, char **argv, option_t opt)
 				{
 					is_last_reg(argc, argv, path);
 					printf("%s", argv[j]);
-					if (atoi(argv[j]) == LAST_REG)
+					if (strcmp(argv[j], LAST_REG))
 						printf("\n");
 					opt.files_printed = 1;
 				}
 			}
 			j++;
 		}
+			//printf("\n");
 
 	}
 	return (EXIT_SUCCESS);
@@ -128,6 +140,10 @@ int is_last_reg(int argc, char **argv, struct stat p)
 		i++;
 	}
 	return (EXIT_SUCCESS);
+}
+int IS_REG(const char * f, struct stat p)
+{
+	return (stat(f, &p) == 0 && S_ISREG(p.st_mode));
 }
 /**
  * options_handler - handling options for ls command

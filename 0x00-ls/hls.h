@@ -20,14 +20,14 @@ typedef struct option_s
 	int vertically;
 	int multi;
 } option_t;
-#define LAST_REG 0x00
-#define IS_REG(f, p) (stat(f, &p) == 0 && S_ISREG(p.st_mode))
+#define LAST_REG ""
 
 /******** FUNCTIONS **********/
-int _ls(const char *dir, const char *prog_name, option_t opt);
+int _ls(const char *dir, const char *prog_name, option_t *opt, int *called);
 int options_builder(char *opts, option_t *opt_struct);
 int options_handler(int argc, char **argv, option_t *opt);
 int file_handler(int argc, char **argv, option_t opt);
 int is_last_reg(int argc, char **argv, struct stat p);
+int IS_REG(const char * f, struct stat p);
 /*****************************/
 #endif
