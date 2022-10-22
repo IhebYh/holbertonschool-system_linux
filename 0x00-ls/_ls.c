@@ -9,13 +9,14 @@
 int main(int argc, char **argv)
 {
 	int i = 1, exit_status;
-	option_t opt = {0, 0};
+	option_t opt = {0, 0, 0};
 
 	if (argc < 2)
 	{
 		return (EXIT_FAILURE);
 	}
 	options_handler(argc, argv, &opt);
+	file_handler(argc, argv, opt);
 	while (i < argc)
 	{
 		if (argv[i][0] != '-')
@@ -23,6 +24,8 @@ int main(int argc, char **argv)
 			exit_status = _ls(argv[i], argv[0], opt);
 			printf("\n");
 		}
+		if (!opt.vertically)
+			printf("\n");
 		i++;
 	}
 	return (exit_status);
@@ -36,21 +39,17 @@ int main(int argc, char **argv)
  * @opt: options
  * Return: void
  */
-int _ls(const char *dir, const char *prog_name, option_t opt)
+int _ls(const char *dir, const char *prog_name,option_t opt)
 {
 	struct dirent *d;
 	DIR *dh;
 	struct stat path;
 	char buff[1024];
 
-	if (!dir)
+	if (!dir || (lstat(dir, &path) == 0 && S_ISREG(path.st_mode)))
 		return (EXIT_FAILURE);
 	dh = opendir(dir);
-	if (lstat(dir, &path) == 0 && S_ISREG(path.st_mode))
-	{
-		printf("%s", dir);
-		return (EXIT_SUCCESS);
-	}
+
 	if (!dh)
 	{
 		buff[0] = 0;
@@ -69,8 +68,8 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 		{
 			if (opt.vertically)
 			{
-			printf("%s", d->d_name);
-			printf("\n");
+				printf("%s", d->d_name);
+				printf("\n");
 			}
 			else
 			{
@@ -81,7 +80,33 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 	closedir(dh);
 	return (EXIT_SUCCESS);
 }
+/**
+ * @brief 
+ * 
+ */
+int file_handler(int argc, char **argv, option_t opt)
+{
+	int j = 1;
+	struct stat path;
 
+	while (!opt.files_printed)
+	{
+		while (j < argc)
+		{
+			if (argv[j][0] != '-')
+			{
+				if (lstat(argv[j], &path) == 0 && S_ISREG(path.st_mode))
+				{
+					printf("%s\n", argv[j]);
+					opt.files_printed = 1;
+				}
+			}
+			j++;
+		}
+	}
+	printf("\n");
+	return (EXIT_SUCCESS);
+}
 /**
  * options_handler - handling options for ls command
  *
@@ -93,14 +118,14 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 int options_handler(int argc, char **argv, option_t *opt)
 {
 	int i = 1, j = 1, files = 0;
-	
+
 	while (j < argc)
 	{
 		if (argv[j][0] != '-')
 			files++;
 		j++;
 	}
-	if ( files > 1)
+	if (files > 1)
 		opt->multi = 1;
 	while (i < argc)
 	{
