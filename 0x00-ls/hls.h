@@ -12,13 +12,13 @@
 #include <pwd.h>
 #include <grp.h>
 /*****************************/
-typedef struct option_s 
+typedef struct option_s
 {
-    int files_printed;
-    int files_nb;
-    int dir_nb;
-    int vertically;
-    int multi;
+	int files_printed;
+	int files_nb;
+	int dir_nb;
+	int vertically;
+	int multi;
 } option_t;
 #define LAST_REG 0x00
 #define IS_REG(f, p) (stat(f, &p) == 0 && S_ISREG(p.st_mode))

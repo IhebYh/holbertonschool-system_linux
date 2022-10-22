@@ -38,7 +38,7 @@ int main(int argc, char **argv)
  * @opt: options
  * Return: void
  */
-int _ls(const char *dir, const char *prog_name,option_t opt)
+int _ls(const char *dir, const char *prog_name, option_t opt)
 {
 	struct dirent *d;
 	DIR *dh;
@@ -48,7 +48,6 @@ int _ls(const char *dir, const char *prog_name,option_t opt)
 	if (!dir || IS_REG(dir, path))
 		return (EXIT_FAILURE);
 	dh = opendir(dir);
-
 	if (!dh)
 	{
 		buff[0] = 0;
@@ -67,14 +66,7 @@ int _ls(const char *dir, const char *prog_name,option_t opt)
 	{
 		if (d->d_name[0] != '.')
 		{
-			if (opt.vertically)
-			{
-				printf("%s\n", d->d_name);
-			}
-			else
-			{
-				printf("%s ", d->d_name);
-			}
+			opt.vertically ? printf("%s\n", d->d_name) : printf("%s ", d->d_name);
 		}
 	}
 	if (opt.files_nb == 0)
@@ -83,15 +75,18 @@ int _ls(const char *dir, const char *prog_name,option_t opt)
 	return (EXIT_SUCCESS);
 }
 /**
- * @brief 
- * 
+ * file_handler - handling files
+ * @argc: argcounter
+ * @argv: argv
+ * @opt: options
+ * Return: int
  */
 int file_handler(int argc, char **argv, option_t opt)
 {
 	int j = 1;
 	struct stat path;
 
-	while (opt.files_printed == 0 && j < argc && opt.multi)
+	while (opt.files_printed == 0)
 	{
 		while (j < argc)
 		{
@@ -101,7 +96,7 @@ int file_handler(int argc, char **argv, option_t opt)
 				{
 					is_last_reg(argc, argv, path);
 					printf("%s", argv[j]);
-					if (LAST_REG == atoi(argv[j]))
+					if (atoi(argv[j]) == LAST_REG)
 						printf("\n");
 					opt.files_printed = 1;
 				}
@@ -112,19 +107,26 @@ int file_handler(int argc, char **argv, option_t opt)
 	}
 	return (EXIT_SUCCESS);
 }
-int is_last_reg(int argc, char **argv, struct stat p) 
+/**
+ * is_last_reg - check if a file is last regular file
+ * @argc: argcounter
+ * @argv: argv
+ * @p: struct stat
+ * Return: int
+ */
+int is_last_reg(int argc, char **argv, struct stat p)
 {
 	int i = 1;
 
 	while (i < argc)
-    {
-        if (IS_REG(argv[i], p))
+	{
+		if (IS_REG(argv[i], p))
 		{
-        	#undef LAST_REG
+			#undef LAST_REG
 			#define LAST_REG argv[i]
 		}
-        i++;
-    }
+		i++;
+	}
 	return (EXIT_SUCCESS);
 }
 /**
@@ -139,6 +141,7 @@ int options_handler(int argc, char **argv, option_t *opt)
 {
 	int i = 1, j = 1;
 	struct stat path;
+
 	while (j < argc)
 	{
 		if (argv[j][0] != '-')
