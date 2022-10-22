@@ -60,14 +60,17 @@ int _ls(const char *dir, const char *prog_name, option_t *opt, int *called)
 		perror(buff);
 		return (EXIT_FAILURE);
 	}
-	if ((opt->files_nb < *called  || (*called == 1)) && opt->multi)
+	if (( opt->files_nb < *called && opt->multi && opt->files_nb != 0))
 	{
 		printf("%s:\n", dir);
 	}
 	else if (opt->multi)
 	{
-		printf("\n%s:\n", dir);
+		if (*called != 1 || opt->files_nb != 0)
+			printf("\n");
+		printf("%s:\n", dir);
 	}
+	(*called)++;
 	d = readdir(dh);
 	while (d != NULL)
 	{
@@ -141,7 +144,7 @@ int is_last_reg(int argc, char **argv, struct stat p)
 }
 int IS_REG(const char * f, struct stat p)
 {
-	return (stat(f, &p) == 0 && S_ISREG(p.st_mode));
+	return (lstat(f, &p) == 0 && S_ISREG(p.st_mode));
 }
 /**
  * options_handler - handling options for ls command
@@ -162,7 +165,7 @@ int options_handler(int argc, char **argv, option_t *opt)
 		{
 			if (IS_REG(argv[j], path))
 				opt->files_nb++;
-			if (IS_REG(argv[j], path))
+			if (IS_REG(argv[j], path) == 0)
 				opt->dir_nb++;
 		}
 		j++;
