@@ -74,7 +74,7 @@ int _ls(const char *dir, const char *prog_name, option_t *opt, int *called)
 	d = readdir(dh);
 	while (d != NULL)
 	{
-		if (d->d_name[0] != '.')
+		if (d->d_name[0] != '.' || opt->hidden)
 		{
 			printf("%s", d->d_name);
 			if (!opt->vertically)
@@ -201,6 +201,9 @@ int options_builder(char *opts, option_t *opt_struct)
 		{
 		case '1':
 			opt_struct->vertically = 1;
+			break;
+		case 'a':
+			opt_struct->hidden = 1;
 			break;
 		default:
 			break;

@@ -18,6 +18,7 @@ typedef struct option_s
 	int files_nb;
 	int dir_nb;
 	int vertically;
+	int hidden;
 	int multi;
 } option_t;
 #define LAST_REG ""
