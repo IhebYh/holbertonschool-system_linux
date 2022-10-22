@@ -46,8 +46,7 @@ int _ls(const char *dir, const char *prog_name, option_t opt)
 	if (!dir)
 		return (EXIT_FAILURE);
 	dh = opendir(dir);
-	lstat(dir, &path);
-	if (S_ISREG(path.st_mode))
+	if (lstat(dir, &path) == 0 && S_ISREG(path.st_mode))
 	{
 		printf("%s", dir);
 		return (EXIT_SUCCESS);
@@ -126,7 +125,6 @@ int options_builder(char *opts, option_t *opt_struct)
 {
 	while (*opts != '\0')
 	{
-		opts++;
 		switch (*opts)
 		{
 		case '1':
@@ -135,6 +133,7 @@ int options_builder(char *opts, option_t *opt_struct)
 		default:
 			break;
 		}
+		opts++;
 	}
 	return (EXIT_SUCCESS);
 }
