@@ -74,7 +74,7 @@ int _ls(const char *dir, const char *prog_name, option_t *opt, int *called)
 	d = readdir(dh);
 	while (d != NULL)
 	{
-		if (d->d_name[0] != '.' || (opt->hidden && (d->d_name[1] != '.' && d->d_name[1] != '\0')))
+		if (d->d_name[0] != '.' || opt->hidden)
 		{
 			printf("%s", d->d_name);
 			if (!opt->vertically)
