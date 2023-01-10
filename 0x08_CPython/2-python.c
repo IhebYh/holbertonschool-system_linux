@@ -23,7 +23,7 @@ void print_python_bytes(PyObject *p)
 	printf("  first %ld bytes: ", len);
 	for (i = 0; i < len; i++)
 		printf("%02hhx%c",
-			((PyBytesObject *)p)->ob_sval[i], i + 1 == sz ? '\n' : ' ');
+			((PyBytesObject *)p)->ob_sval[i], i + 1 == len ? '\n' : ' ');
 
 }
 
