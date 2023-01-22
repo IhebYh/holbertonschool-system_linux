@@ -19,7 +19,7 @@
 #define YGET(i, x) \
 	(is_32(elf_header->e64) ? elf_header->y32[i].x : elf_header->y64[i].x)
 #define USAGE_ERR "hnm elf_filename\n"
-#define MYNAME "nm"
+#define MYNAME "hnm"
 #define ERR_PREFIX MYNAME ":  "
 #define ERR_NO_ENTRY ERR_PREFIX \
 	"'%s': No such file\n"
