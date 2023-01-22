@@ -9,7 +9,7 @@
  * print_all_symbol_tables - prints all the symbol table stuff
  * @elf_header: address of elf header struct
  * @fd: the file descriptor of our ELF file
- * @num_printed: pointer to var storing number of symbols printed
+ * @printed_num: pointer to var storing number of symbols printed
  * Return: 0 on success else exit_status
  */
 int print_all_symbol_tables(elf_t *elf_header, int fd, size_t *printed_num)
@@ -30,7 +30,7 @@ int print_all_symbol_tables(elf_t *elf_header, int fd, size_t *printed_num)
 	{
 		if (SGET(i, sh_type) == SHT_SYMTAB)
 		{
-			*printed_num += 
+			*printed_num +=
 			print_symbol_table(elf_header, fd, i, string_table);
 		}
 	}
@@ -85,7 +85,6 @@ size_t print_symbol_table(elf_t *elf_header, int fd, size_t i,
  * @sym_string_table: the symbol string table
  * @versym: the Elf64_Versym section array
  * @verneed: the Elf64_Verneed section array
- * @verneed_size: the size of the verneed array
  * @section: the symbol section to print
  * Return: number of symbols printed
  */
@@ -124,7 +123,6 @@ size_t print_symbol_table32(elf_t *elf_header, char *string_table,
  * @sym_string_table: the symbol string table
  * @versym: the Elf64_Versym section array
  * @verneed: the Elf64_Verneed section array
- * @verneed_size: the size of the verneed array
  * @section: the symbol section to print
  * Return: number of symbols printed
  */
@@ -162,7 +160,7 @@ size_t print_symbol_table64(elf_t *elf_header, char *string_table,
  * @sym_string_table: the symbol string table
  * @versym: the Elf64_Versym section array
  * @verneed: the Elf64_Verneed section array
- * @verneed_size: the size of the verneed array
+ * @verneed_size: the Elf64_verneed section array size
  * @i: section index of current symbol table
  * @size: size of the symbol table
  * @section: the symbol section to print

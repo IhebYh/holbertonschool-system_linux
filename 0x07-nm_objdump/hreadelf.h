@@ -39,8 +39,8 @@
  * @s32: the 32 bit struct section array
  * @p64: the 64 bit struct program array
  * @p32: the 32 bit struct program array
- * @sy64: the 64 bit struct symbol array
- * @sy32: the 32 bit struct symbol array
+ * @y64: the 64 bit struct symbol array
+ * @y32: the 32 bit struct symbol array
  */
 typedef struct Elf
 {
@@ -52,7 +52,6 @@ typedef struct Elf
 	Elf32_Phdr *p32;
 	Elf64_Sym *y64;
 	Elf32_Sym *y32;
-
 } elf_t;
 /******* FUNCTION'S CALL *******/
 
