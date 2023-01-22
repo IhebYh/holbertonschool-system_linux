@@ -52,7 +52,7 @@ size_t print_symbol_table(elf_t *elf_header, int fd, size_t i,
 	char *sym_string_table = NULL;
 	uint16_t *versym = NULL;
 	Elf64_Verneed *verneed = NULL;
-	size_t versym_size = 0, verneed_size, size, j, printed_num;
+	size_t size, j, printed_num;
 
 	size = SGET(i, sh_size) / SGET(i, sh_entsize);
 	read_symbol_table(elf_header, fd, i);
@@ -63,13 +63,13 @@ size_t print_symbol_table(elf_t *elf_header, int fd, size_t i,
 	if (is_64)
 	{
 		printed_num = print_symbol_table64(elf_header, string_table,
-		sym_string_table, versym, verneed, verneed_size, i);
+		sym_string_table, versym, verneed, i);
 		elf_header->y64 = (free(elf_header->y64), NULL);
 	}
 	else
 	{
 		printed_num = print_symbol_table32(elf_header, string_table,
-		sym_string_table, versym, verneed, verneed_size, i);
+		sym_string_table, versym, verneed, i);
 		elf_header->y32 = (free(elf_header->y32), NULL);
 	}
 	sym_string_table = (free(sym_string_table), NULL);
@@ -91,15 +91,13 @@ size_t print_symbol_table(elf_t *elf_header, int fd, size_t i,
  */
 size_t print_symbol_table32(elf_t *elf_header, char *string_table,
 	char *sym_string_table, uint16_t *versym, Elf64_Verneed *verneed,
-	size_t verneed_size, int section)
+	int section)
 {
 	size_t i = 0, printed_num = 0;
 	size_t size = SGET(section, sh_size) / SGET(section, sh_entsize);
 
 	for (i = 0; i < size; i++)
 	{
-		char str[16] = {0};
-
 		if ((YGET(i, st_info) & 0xf) == STT_SECTION ||
 			(YGET(i, st_info) & 0xf) == STT_FILE || !i)
 			continue;
@@ -113,11 +111,10 @@ size_t print_symbol_table32(elf_t *elf_header, char *string_table,
 			sym_string_table + YGET(i, st_name));
 		printed_num++;
 	}
-	return (num_printed);
+	return (printed_num);
 	(void)string_table;
 	(void)versym;
 	(void)verneed;
-	(void)verneed_size;
 }
 
 /**
@@ -133,15 +130,13 @@ size_t print_symbol_table32(elf_t *elf_header, char *string_table,
  */
 size_t print_symbol_table64(elf_t *elf_header, char *string_table,
 	char *sym_string_table, uint16_t *versym, Elf64_Verneed *verneed,
-	size_t verneed_size, int section)
+	int section)
 {
 	size_t i = 0, printed_num = 0;
 	size_t size = SGET(section, sh_size) / SGET(section, sh_entsize);
 
 	for (i = 0; i < size; i++)
 	{
-		char str[16] = {0};
-
 		if ((YGET(i, st_info) & 0xf) == STT_SECTION ||
 			(YGET(i, st_info) & 0xf) == STT_FILE || !i)
 			continue;
@@ -155,11 +150,10 @@ size_t print_symbol_table64(elf_t *elf_header, char *string_table,
 			sym_string_table + YGET(i, st_name));
 		printed_num++;
 	}
-	return (num_printed);
+	return (printed_num);
 	(void)string_table;
 	(void)versym;
 	(void)verneed;
-	(void)verneed_size;
 }
 
 /**

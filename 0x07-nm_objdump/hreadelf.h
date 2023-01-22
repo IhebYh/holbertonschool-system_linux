@@ -19,7 +19,7 @@
 #define YGET(i, x) \
 	(is_32(elf_header->e64) ? elf_header->y32[i].x : elf_header->y64[i].x)
 #define USAGE_ERR "hnm elf_filename\n"
-#define MYNAME "hnm"
+#define MYNAME "nm"
 #define ERR_PREFIX MYNAME ":  "
 #define ERR_NO_ENTRY ERR_PREFIX \
 	"'%s': No such file\n"
@@ -74,31 +74,6 @@ void switch_all_endian_symbol(elf_t *h, size_t i);
 void switch_all_endian_ver(elf_t *h, uint16_t *versym, size_t versym_size,
 	Elf64_Verneed *verneed, size_t verneed_size);
 
-/* header_printer.c */
-int print_header(elf_t *elf_header);
-int print_magic(Elf64_Ehdr *elf_header);
-int print_class(Elf64_Ehdr *elf_header);
-int print_data(Elf64_Ehdr *elf_header);
-int print_version(Elf64_Ehdr *elf_header);
-
-/* header_printer_2.c */
-int print_osabi(Elf64_Ehdr *elf_header);
-int print_osabi_more(Elf64_Ehdr *elf_header);
-int print_abiversion(Elf64_Ehdr *elf_header);
-int print_type(elf_t *elf_header);
-int print_entry(elf_t *elf_header);
-
-/* header_printer_3.c */
-int print_machine(Elf64_Ehdr *elf_header);
-int print_e_version(elf_t *elf_header);
-int print_program_headers(elf_t *elf_header);
-char *get_machine(Elf64_Ehdr *elf_header);
-char *get_machine2(Elf64_Ehdr *elf_header);
-
-/* header_printer_4.c */
-int print_section_headers(elf_t *elf_header);
-int print_flags(elf_t *elf_header);
-
 /* section_printer.c */
 int print_section_headers_full(elf_t *elf_header, int fd);
 void read_section_headers(elf_t *elf_header, int fd);
@@ -113,26 +88,16 @@ char *get_section_flags(elf_t *elf_header, size_t i);
 /* elf_type.c */
 char *get_type(elf_t *elf_header);
 
-/* program_printer.c */
-int print_program_headers_full(elf_t *elf_header, int fd);
-void print_program_headers32(elf_t *elf_header, char *string_table, int fd);
-void print_program_headers64(elf_t *elf_header, char *string_table, int fd);
-void read_program_headers(elf_t *elf_header, int fd);
-char *get_segment_type(unsigned long p_type);
-
-/* program_printer.c */
-int print_section_to_segment_mapping(elf_t *elf_header, char *string_table);
-
 /* symbole_printer.c */
 int print_all_symbol_tables(elf_t *elf_header, int fd, size_t *printed_num);
 size_t print_symbol_table(elf_t *elf_header, int fd, size_t i,
 	char *string_table);
 size_t print_symbol_table32(elf_t *elf_header, char *string_table,
 	char *sym_string_table, uint16_t *versym, Elf64_Verneed *verneed,
-	size_t verneed_size, int section);
+	int section);
 size_t print_symbol_table64(elf_t *elf_header, char *string_table,
 	char *sym_string_table, uint16_t *versym, Elf64_Verneed *verneed,
-	size_t verneed_size, int section);
+	int section);
 void print_verneed_info(elf_t *elf_header, char *sym_string_table,
 	uint16_t *versym, Elf64_Verneed *verneed, size_t verneed_size, size_t i,
 	size_t size, int section);
@@ -152,4 +117,5 @@ char *get_sym_bind(elf_t *elf_header, size_t i);
 char *get_sym_visibility(elf_t *elf_header, size_t i);
 char get_nm_type32(Elf32_Sym sym, Elf32_Shdr *shdr);
 char get_nm_type64(Elf64_Sym sym, Elf64_Shdr *shdr);
+
 #endif /* _HREADELF_H_ */

@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -pedantic -std=gnu90 -g
+CFLAGS = -Wall -Werror -Wextra -pedantic -std=gnu89 -g
 
-SRC0 = hnm.c utilities.c endian_switcher.c endian_switcher_2.c elf_type.c section_printer.c section_printer_2.c symbole_printer.c print_symbols2.c symbole_printer_2.c
+SRC0 = hnm.c utilities.c endian_switcher.c endian_switcher_2.c elf_type.c section_printer.c section_printer_2.c symbole_printer.c symbole_printer_2.c symbole_printer_3.c
 OBJ0 = $(SRC0:.c=.o)
 NAME0 = hnm
 
