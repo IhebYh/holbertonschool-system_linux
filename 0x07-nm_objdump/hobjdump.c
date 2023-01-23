@@ -14,20 +14,20 @@ int main(int ac, char **argv)
 	if (ac < 2)
 		return (fprintf(stderr, USAGE_ERR), EXIT_FAILURE);
 	if (ac == 2)
-		return (file_processor(argv[1], 0, argv));
+		return (process_file(argv[1], 0, argv));
 	while (*++_argv)
-		ret += file_processor(*_argv, 1, argv);
+		ret += process_file(*_argv, 1, argv);
 	return (ret);
 }
 
 /**
- * file_processor - displays symbols for 1 file
+ * process_file - displays bytes for 1 file
  * @file_name: name of file to process
  * @multiple: 1 if there are multiple files else 0
  * @argv: the argument vector
  * Return: 0 on success else 1 on error
  */
-int file_processor(char *file_name, int multiple, char **argv)
+int process_file(char *file_name, int multiple, char **argv)
 {
 	int fd, exit_status = 0;
 	size_t r, num_printed = 0;
@@ -54,17 +54,16 @@ int file_processor(char *file_name, int multiple, char **argv)
 			if (r != sizeof(elf_header.e32) || elf_checker((char *)&elf_header.e32))
 				exit_status = (fprintf(stderr, NOT_MAGIC_ERR, argv[0]), EXIT_FAILURE);
 		}
-		if (multiple)
-			printf("\n%s:\n", file_name);
 		switch_all_endian(&elf_header);
-		exit_status = print_all_symbol_tables(&elf_header, fd, &num_printed);
-		if (!num_printed)
-			fprintf(stderr, "%s: %s: no symbols\n", argv[0], file_name);
+		printf("\n%s:     file format %s\n",
+			file_name, get_file_format(&elf_header));
+		exit_status = dump_all_sections(&elf_header, fd, &num_printed);
 	}
 	free(elf_header.s32);
 	free(elf_header.s64);
 	free(elf_header.p32);
 	free(elf_header.p64);
-	close(fd);
+	close(fd); 
 	return (exit_status);
+	(void)multiple;
 }

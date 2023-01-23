@@ -10,6 +10,9 @@
 #include <limits.h>
 #include <fcntl.h>
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
 #define EGET(x) \
 	(is_32(elf_header->e64) ? elf_header->e32.x : elf_header->e64.x)
 #define SGET(i, x) \
@@ -20,7 +23,7 @@
 	(is_32(elf_header->e64) ? elf_header->y32[i].x : elf_header->y64[i].x)
 #define USAGE_ERR "hnm elf_filename\n"
 #define MYNAME "hnm"
-#define ERR_PREFIX MYNAME ":  "
+#define ERR_PREFIX "%s:  "
 #define ERR_NO_ENTRY ERR_PREFIX \
 	"'%s': No such file\n"
 #define ERR_NO_ACCESS ERR_PREFIX \
@@ -30,6 +33,17 @@
 #define is_32(x) ((x).e_ident[EI_CLASS] == ELFCLASS32)
 #define is_64 ((elf_header->e64).e_ident[EI_CLASS] == ELFCLASS64)
 #define is_be(x) ((x).e_ident[EI_DATA] == ELFDATA2MSB)
+
+#define BFD_NO_FLAGS	0x00
+#define HAS_RELOC	0x01
+#define EXEC_P		0x02
+#define HAS_LINENO	0x04
+#define HAS_DEBUG	0x08
+#define HAS_SYMS	0x10
+#define HAS_LOCALS	0x20
+#define DYNAMIC		0x40
+#define WP_TEXT		0x80
+#define D_PAGED		0x100
 
 /**
  * struct Elf - stores 32/64 structs and other data
@@ -56,7 +70,7 @@ typedef struct Elf
 /******* FUNCTION'S CALL *******/
 
 /**** utilities.c *******/
-int open_file(char *name, int silent);
+int open_file(char *name, int silent, char **argv);
 int elf_checker(char *elf_header);
 void print_bytes(void *ptr, size_t n);
 
@@ -116,5 +130,19 @@ char *get_sym_bind(elf_t *elf_header, size_t i);
 char *get_sym_visibility(elf_t *elf_header, size_t i);
 char get_nm_type32(Elf32_Sym sym, Elf32_Shdr *shdr);
 char get_nm_type64(Elf64_Sym sym, Elf64_Shdr *shdr);
+
+/* hnm.c */
+int file_processor(char *file_name, int multiple, char **argv);
+
+/* hobjdump_2.c */
+int dump_all_sections(elf_t *elf_header, int fd, size_t *num_printed);
+size_t dump_section(elf_t *elf_header, int fd, size_t i,
+	char *string_table);
+
+/* hobjdump_2.c */
+char *get_file_format(elf_t *elf_header);
+void print_f_header(elf_t *elf_header, char *string_table);
+int has_section(elf_t *elf_header, char *string_table, char *section_name);
+void print_f_flags(unsigned long flags);
 
 #endif /* _HREADELF_H_ */

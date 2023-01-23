@@ -4,9 +4,10 @@
  * open_file - opens a file descriptor, exits on failure
  * @name: name of file to open
  * @silent: if true don't print errors
+ * @argv: arg value from main function
  * Return: fd of file
  */
-int open_file(char *name, int silent)
+int open_file(char *name, int silent, char **argv)
 {
 	int fd;
 
@@ -14,9 +15,9 @@ int open_file(char *name, int silent)
 	if (fd == -1 && !silent)
 	{
 		if (errno == EACCES)
-			fprintf(stderr, ERR_NO_ACCESS, name);
+			fprintf(stderr, ERR_NO_ACCESS, argv[0], name);
 		else if (errno == ENOENT)
-			fprintf(stderr, ERR_NO_ENTRY, name);
+			fprintf(stderr, ERR_NO_ENTRY, argv[0], name);
 	}
 	return (fd);
 }
