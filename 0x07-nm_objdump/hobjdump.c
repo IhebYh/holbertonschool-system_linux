@@ -63,7 +63,7 @@ int process_file(char *file_name, int multiple, char **argv)
 	free(elf_header.s64);
 	free(elf_header.p32);
 	free(elf_header.p64);
-	close(fd); 
+	close(fd);
 	return (exit_status);
 	(void)multiple;
 }
