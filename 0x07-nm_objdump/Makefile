@@ -6,7 +6,7 @@ OBJ0 = $(SRC0:.c=.o)
 NAME0 = hnm
 
 SRC1 = hobjdump.c hobjdump_2.c hobjdump_3.c utilities.c endian_switcher.c endian_switcher_2.c elf_type.c section_printer.c section_printer_2.c symbole_printer_2.c
-OBJ1 = $(SRC0:.c=.o)
+OBJ1 = $(SRC1:.c=.o)
 NAME1 = hobjdump
 
 .PHONY: all clean oclean flcean re

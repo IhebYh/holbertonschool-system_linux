@@ -54,7 +54,7 @@ void print_f_header(elf_t *elf_header, char *string_table)
 
 	printf(", flags 0x%08lx:\n", flags);
 	print_f_flags(flags);
-	printf("start address 0x%0*lx\n\n", IS_64 ? 16 : 8, EGET(e_entry));
+	printf("start address 0x%0*lx\n\n", is_64 ? 16 : 8, EGET(e_entry));
 }
 
 /**

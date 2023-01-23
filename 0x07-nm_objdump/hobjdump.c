@@ -14,20 +14,20 @@ int main(int ac, char **argv)
 	if (ac < 2)
 		return (fprintf(stderr, USAGE_ERR), EXIT_FAILURE);
 	if (ac == 2)
-		return (process_file(argv[1], 0, argv));
+		return (file_processor(argv[1], 0, argv));
 	while (*++_argv)
-		ret += process_file(*_argv, 1, argv);
+		ret += file_processor(*_argv, 1, argv);
 	return (ret);
 }
 
 /**
- * process_file - displays bytes for 1 file
+ * file_processor - displays bytes for 1 file
  * @file_name: name of file to process
  * @multiple: 1 if there are multiple files else 0
  * @argv: the argument vector
  * Return: 0 on success else 1 on error
  */
-int process_file(char *file_name, int multiple, char **argv)
+int file_processor(char *file_name, int multiple, char **argv)
 {
 	int fd, exit_status = 0;
 	size_t r, num_printed = 0;
