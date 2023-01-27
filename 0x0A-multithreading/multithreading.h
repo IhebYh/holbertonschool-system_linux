@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 /**
  * struct pixel_s - RGB pixel
@@ -72,5 +73,6 @@ typedef struct blur_portion_s
 
 /************* FUNCTION CALLS ************/
 void *thread_entry(void *arg);
+int tprintf(char const *format, ...);
 
 #endif /* _MULTITHREADING_H_ */
