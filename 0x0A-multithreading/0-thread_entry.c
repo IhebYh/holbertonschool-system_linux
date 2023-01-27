@@ -9,6 +9,7 @@
 void *thread_entry(void *arg)
 {
 	char *data = (char *) arg;
+
 	printf("%s\n", data);
 	pthread_exit(NULL);
 }
