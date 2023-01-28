@@ -1,5 +1,6 @@
 #include "strace.h"
 
+unsigned long get_syscall_param(struct user_regs_struct uregs, size_t i);
 
 /**
  * main - entry point

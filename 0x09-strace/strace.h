@@ -15,6 +15,5 @@
 void trace_child(char **av, char **envp);
 void trace_parent(pid_t child_pid);
 int await_syscall(pid_t child_pid);
-unsigned long get_syscall_param(struct user_regs_struct uregs, size_t i);
 
 #endif /* _STRACE_H_ */
