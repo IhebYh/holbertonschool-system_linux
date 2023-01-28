@@ -6,7 +6,7 @@
  * @av: argument vector
  * Return: EXIT_SUCCESS or error.
  */
-int main(int argc, char **argv)
+int main(int ac, char **argv)
 {
 	pid_t child;
 
@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	child = fork();
 	if (child == -1)
 	{
-		dprintf(stderr, "Fork fail: %d\n", errno);
+		dprintf(STDERR_FILENO, "Fork fail: %d\n", errno);
 		exit(-1);
 	}
 	else if (!child)

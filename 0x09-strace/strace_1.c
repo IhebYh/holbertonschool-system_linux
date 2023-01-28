@@ -6,7 +6,7 @@
  * @av: argument vector
  * Return: EXIT_SUCCESS or error.
  */
-int main(int argc, char **argv)
+int main(int ac, char **argv)
 {
 	pid_t child;
 
@@ -20,7 +20,7 @@ int main(int argc, char **argv)
 	child = fork();
 	if (child == -1)
 	{
-		dprintf(stderr, "Fork fail: %d\n", errno);
+		dprintf(STDERR_FILENO, "Fork fail: %d\n", errno);
 		exit(-1);
 	}
 	else if (!child)
@@ -64,10 +64,12 @@ void trace_parent(pid_t child_pid)
 			break;
 		memset(&uregs, 0, sizeof(uregs));
 		ptrace(PTRACE_GETREGS, child_pid, 0, &uregs);
-		printf("%lu\n", (long)uregs.orig_rax);
+		printf("%s", syscalls_64_g[uregs.orig_rax].name);
 		if (await_syscall(child_pid))
 			break;
+		printf("\n");
 	}
+	printf("\n");
 }
 
 /**
