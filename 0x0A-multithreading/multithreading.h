@@ -8,7 +8,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdarg.h>
-
+#include "pool_thread.h"
+#include "list.h"
 /**
  * struct pixel_s - RGB pixel
  *
@@ -81,5 +82,12 @@ pixel_t *conv_sum(blur_portion_t const *portion, size_t i, size_t j,
 void free_img_utils(blur_portion_t const *portion, pixel_t ***img_c,
 	pixel_t ***img);
 void blur_portion(blur_portion_t const *portion);
+
+list_t *prime_factors(char const *s);
+void primeFactors(unsigned long n, list_t *l);
+
+void *exec_tasks(list_t const *tasks);
+void destroy_task(task_t *task);
+task_t *create_task(task_entry_t entry, void *param);
 
 #endif /* _MULTITHREADING_H_ */
