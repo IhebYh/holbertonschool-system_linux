@@ -73,6 +73,13 @@ typedef struct blur_portion_s
 
 /************* FUNCTION CALLS ************/
 void *thread_entry(void *arg);
+
 int tprintf(char const *format, ...);
+
+pixel_t *conv_sum(blur_portion_t const *portion, size_t i, size_t j,
+		pixel_t ***img);
+void free_img_utils(blur_portion_t const *portion, pixel_t ***img_c,
+	pixel_t ***img);
+void blur_portion(blur_portion_t const *portion);
 
 #endif /* _MULTITHREADING_H_ */
