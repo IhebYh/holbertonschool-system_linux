@@ -1,46 +1,15 @@
-#include "strace.h"
-
-/**
- * main - entry point
- * @ac: argument count
- * @av: argument vector
- * Return: EXIT_SUCCESS or error.
- */
-int main(int ac, char **argv)
-{
-	pid_t child;
-
-	if (ac < 2)
-	{
-		printf("Usage: %s command [args...]\n", argv[0]);
-		return (EXIT_FAILURE);
-	}
-
-	setbuf(stdout, NULL);
-	child = fork();
-	if (child == -1)
-	{
-		dprintf(STDERR_FILENO, "Fork fail: %d\n", errno);
-		exit(-1);
-	}
-	else if (!child)
-		trace_child(argv, environ);
-	else
-		trace_parent(child);
-
-	return (0);
-}
+#include "syscalls.h"
 
 /**
  * trace_child - traces child process
  * @av: argument vector for execve
- * @envp: environ for execve
+ * @environ: environ for execve
  */
-void trace_child(char **av, char **envp)
+void trace_child(char **av, char **environ)
 {
 	ptrace(PTRACE_TRACEME, 0, 0, 0);
 	kill(getpid(), SIGSTOP);
-	if (execve(av[1], av + 1, envp) == -1)
+	if (execve(av[1], av + 1, environ) == -1)
 	{
 		dprintf(STDERR_FILENO, "Exec failed: %d\n", errno);
 		exit(-1);
@@ -88,4 +57,35 @@ int await_syscall(pid_t child_pid)
 		if (WIFEXITED(status))
 			return (1);
 	}
+}
+
+/**
+ * main - entry point
+ * @ac: argument count
+ * @av: argument vector
+ * Return: EXIT_SUCCESS or error.
+ */
+int main(int ac, char **argv)
+{
+	pid_t child;
+
+	if (ac < 2)
+	{
+		printf("Usage: %s command [args...]\n", argv[0]);
+		return (EXIT_FAILURE);
+	}
+
+	setbuf(stdout, NULL);
+	child = fork();
+	if (child == -1)
+	{
+		dprintf(STDERR_FILENO, "Fork fail: %d\n", errno);
+		exit(-1);
+	}
+	else if (!child)
+		trace_child(argv, environ);
+	else
+		trace_parent(child);
+
+	return (0);
 }

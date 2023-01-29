@@ -12,8 +12,6 @@
 
 #include "syscalls.h"
 
-void trace_child(char **av, char **envp);
-void trace_parent(pid_t child_pid);
-int await_syscall(pid_t child_pid);
+extern char **environ;
 
 #endif /* _STRACE_H_ */

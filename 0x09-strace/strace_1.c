@@ -1,4 +1,4 @@
-#include "strace.h"
+#include "syscalls.h"
 
 /**
  * main - entry point

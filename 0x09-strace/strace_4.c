@@ -1,144 +1,132 @@
-#include "strace.h"
+#include "syscalls.h"
 
-unsigned long get_syscall_param(struct user_regs_struct uregs, size_t i,
-	pid_t child);
 
 /**
- * main - entry point
- * @ac: argument count
- * @av: argument vector
- * @envp: environ
- * Return: EXIT_SUCCESS or error.
- */
-int main(int ac, char **av, char **envp)
+ * main - traces a process and prints system call numbers as they're called
+ * @argc: argument count
+ * @argv: argument array
+ * @envp: environment parameters
+ * Return: 0 on success | 1 on failure (not enough arguments)
+ **/
+int main(int argc, char *argv[], char *envp[])
 {
-	pid_t child_pid;
+	int i, status;
+	struct user_regs_struct regs;
+	pid_t pid;
 
-	if (ac < 2)
+	if (argc < 2)
 	{
-		printf("Usage: %s command [args...]\n", av[0]);
-		return (EXIT_FAILURE);
+		fprintf(stderr, "Usage: %s <full_path> [path_args]\n", argv[0]);
+		return (1);
 	}
 	setbuf(stdout, NULL);
-	child_pid = fork();
-	if (child_pid == -1)
+	pid = fork();
+	if (pid == 0)
 	{
-		dprintf(STDERR_FILENO, "Fork failed: %d\n", errno);
-		exit(-1);
+		ptrace(PTRACE_TRACEME, pid, NULL, NULL);
+		execve(argv[1], argv + 1, envp);
 	}
-	else if (!child_pid)
-		trace_child(av, envp);
 	else
-		trace_parent(child_pid);
+	{
+		/* execve print_execve_line */
+		status = print_execve_line(argc, argv, envp, pid);
+		for (i = 1; !WIFEXITED(status); i ^= 1)
+		{
+			ptrace(PT_SYSCALL, pid, NULL, NULL);
+			wait(&status);
+			ptrace(PT_GETREGS, pid, NULL, &regs);
+			if (i)
+			{
+				printf("\n%s", syscalls_64_g[regs.orig_rax].name);
+				print_args(&syscalls_64_g[regs.orig_rax], &regs, pid);
+			}
+			else if (WIFEXITED(status))
+				printf(") = ?\n");
+			else
+				printf(") = %#lx", (size_t)regs.rax);
+		}
+	}
+
 	return (0);
 }
 
+
 /**
- * trace_child - traces child process
- * @av: argument vector for execve
- * @envp: environ for execve
- */
-void trace_child(char **av, char **envp)
+ * print_execve_line - prints first line of strace output (execve)
+ * @argc: argument count
+ * @argv: arguments
+ * @envp: environtment array
+ * @pid: pid
+ * Return: 0 on failure | 1 on success
+ **/
+int print_execve_line(int argc, char *argv[], char *envp[], pid_t pid)
 {
-	setbuf(stdout, NULL);
-	printf("execve(0, 0, 0) = 0\n");
-	ptrace(PTRACE_TRACEME, 0, 0, 0);
-	kill(getpid(), SIGSTOP);
-	if (execve(av[1], av + 1, envp) == -1)
+	struct user_regs_struct regs;
+	int i, status;
+	char msg[212];
+
+	ptrace(PT_SYSCALL, pid, NULL, NULL);
+	wait(&status);
+	ptrace(PT_GETREGS, pid, NULL, &regs);
+	if (WIFEXITED(status))
 	{
-		dprintf(STDERR_FILENO, "Exec failed: %d\n", errno);
-		exit(-1);
+		sprintf(msg, "%s: Can't stat '%s'", argv[0], argv[1]);
+		perror(msg);
+		return (0);
 	}
+	printf("execve(\"%s\", [", argv[1]);
+	for (i = 1; i < argc; i++)
+		printf("%s\"%s\"", i == 1 ? "" : ", ", argv[i]);
+	for (i = 0; envp[i]; i++)
+		;
+	printf("], [/* %d vars */]) = %#lx", i, (size_t)regs.rax);
+	return (1);
 }
 
-/**
- * trace_parent - calls made by tracing parent
- * @child_pid: pid of child to trace
- */
-void trace_parent(pid_t child_pid)
-{
-	int status, i, first = 1;
-	struct user_regs_struct uregs;
 
-	waitpid(child_pid, &status, 0);
-	ptrace(PTRACE_SETOPTIONS, child_pid, 0, PTRACE_O_TRACESYSGOOD);
-	while (1)
+/**
+ * print_args - print system call arguments
+ * @sc: syscall info
+ * @regs: registers (struct user_regs_struct)
+ * @pid: pid
+ **/
+void print_args(const syscall_t *sc, struct user_regs_struct *regs, pid_t pid)
+{
+	size_t i, params[MAX_PARAMS];
+	char *str = malloc(4096);
+	unsigned long bytes, buf;
+
+	params[0] = regs->rdi, params[1] = regs->rsi, params[2] = regs->rdx;
+	params[3] = regs->r10, params[4] = regs->r8, params[5] = regs->r9;
+	putchar('(');
+	for (i = 0; sc->params[0] != VOID && i < sc->nb_params; i++)
 	{
-		if (await_syscall(child_pid))
-			break;
-		memset(&uregs, 0, sizeof(uregs));
-		ptrace(PTRACE_GETREGS, child_pid, 0, &uregs);
-		if (first && uregs.orig_rax == 59)
-			first = 1;
-		else
+		printf(i ? ", " : "");
+		if (sc->params[i] == CHAR_P)
 		{
-			printf("%s(", syscalls_64_g[uregs.orig_rax].name);
-			for (i = 0; i < (int)syscalls_64_g[uregs.orig_rax].nb_params; i++)
+			if (params[i])
 			{
-				if (i)
-					printf(", ");
-				if (syscalls_64_g[uregs.orig_rax].params[i] == VARARGS)
-					printf("...");
-				else if(syscalls_64_g[uregs.orig_rax].params[i] == CHAR_P)
-					printf("%s", (char *)get_syscall_param(uregs, i, child_pid));
-				else
-					printf("%#lx", get_syscall_param(uregs, i, child_pid));
+				for (bytes = 0; 1; bytes += sizeof(buf))
+				{
+					buf = ptrace(PTRACE_PEEKDATA, pid, params[i] + bytes);
+					if (errno)
+					{
+						str[bytes] = '\0';
+						break;
+					}
+					memcpy(str + bytes, &buf, sizeof(buf));
+					if (memchr(&buf, '\0', sizeof(buf)))
+						break;
+				}
+				printf("\"%s\"", str);
 			}
+			else
+				printf("0");
 		}
-		if (await_syscall(child_pid))
-			break;
-		memset(&uregs, 0, sizeof(uregs));
-		ptrace(PTRACE_GETREGS, child_pid, 0, &uregs);
-		if (first && uregs.orig_rax == 59)
-			first = 0;
+		else if (sc->params[i] == VARARGS)
+			printf("...");
 		else
-			printf(") = %#lx\n", (unsigned long)uregs.rax);
+			printf("%#lx", (size_t)params[i]);
 	}
-}
-
-/**
- * await_syscall - waits for a syscall
- * @child_pid: pid of process to await
- * Return: 0 if child stopped, 1 if exited
- */
-int await_syscall(pid_t child_pid)
-{
-	int status;
-
-	while (1)
-	{
-		ptrace(PTRACE_SYSCALL, child_pid, 0, 0);
-		waitpid(child_pid, &status, 0);
-		if (WIFSTOPPED(status) && WSTOPSIG(status) & 0x80)
-			return (0);
-		if (WIFEXITED(status))
-		{
-			printf(") = ?\n");
-			return (1);
-		}
-	}
-}
-
-/**
- * get_syscall_param - gets given parameter for syscall
- * @uregs: userspace register struct
- * @i: syscall parameter index
- * @child_pid: pid of child
- * Return: value of param
- */
-unsigned long get_syscall_param(struct user_regs_struct uregs, size_t i,
-	pid_t child)
-{
-	switch (i)
-	{
-		case 0: return (uregs.rdi);
-		case 1: return (uregs.rsi);
-		case 2: return (uregs.rdx);
-		case 3: return (uregs.r10);
-		case 4: return (uregs.r8);
-		case 5: return (uregs.r9);
-		default: return (-1);
-	}
-	(void)uregs;
-	(void)child;
+	free(str);
 }
