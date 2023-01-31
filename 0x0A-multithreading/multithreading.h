@@ -10,6 +10,8 @@
 #include <stdarg.h>
 #include "pool_thread.h"
 #include "list.h"
+#include <sys/sysinfo.h>
+
 /**
  * struct pixel_s - RGB pixel
  *
@@ -89,5 +91,11 @@ void primeFactors(unsigned long n, list_t *l);
 void *exec_tasks(list_t const *tasks);
 void destroy_task(task_t *task);
 task_t *create_task(task_entry_t entry, void *param);
+
+void blur_image(img_t *img_blur, img_t const *img, kernel_t const *kernel);
+pthread_t *create_list_thr(void);
+blur_portion_t *create_list_portion(void);
+void *thread_entry_blur(void *arg);
+
 
 #endif /* _MULTITHREADING_H_ */
