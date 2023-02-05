@@ -1,25 +1,32 @@
 BITS 64
-        global asm_strchr
-        section .text
 
+	global asm_strchr
+
+	section .text
+
+	
 asm_strchr:
-        push rbp
-        mov rsp, rbp
-  	    xor rax, rax
+
+	push rbp
+	mov rbp, rsp		
+
+	mov rax, 0h
 
 while:
-	    mov al, BYTE [rdi]
-	    cmp BYTE [rdi], sil
-	    jz found
-	    cmp BYTE [rdi], 0
-	    jz end
-	    inc rdi
-	    jmp while
+	mov al, BYTE [rdi]
+	cmp BYTE [rdi], sil
+	jz found
+	cmp BYTE [rdi], 0h
+	jz retur
+	inc rdi
+	jmp while
 
 found:
-	    mov rax, rdi
+	mov rax, rdi
 
-end:
-    	mov rsp, rbp
-	    pop rbp
-	    ret
+retur:
+
+	mov rsp, rbp		
+	pop rbp			
+
+	ret
